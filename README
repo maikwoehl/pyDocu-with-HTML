@@ -1,0 +1,18 @@
+Project: pyDocu
+Author: daemonTutorials [Maik Wöhl]
+Version: 0.0.1
+
+Installation
+============
+
+1. Just copy the existing files into your favorite Directory.
+2. Navigate with your Terminal to your Directory(path/to/pyDocu)
+3. Type "python3 server.py"
+4. Follow the instructions on the screen!
+
+That's all - be happy!
+
+Documentation
+=============
+At this time, no documentation exist.
+
