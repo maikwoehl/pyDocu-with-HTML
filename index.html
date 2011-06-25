@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>tkhelp Webinterface</title>
+<meta name="generator" content="tkhelp Webinterface System" />
+<style type="text/css">
+body { text-align: center; }
+#search-help { display:none; }
+#hide_help { display: none; }
+</style>
+<script type="text/javascript" src="../js/jquery-1.6.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#display_help').click(function() {
+		$('#search-help').slideDown('slow');
+		$('#display_help').hide('slow');
+		$('#hide_help').fadeIn('slow');
+	});
+	$('#hide_help').click(function() {
+		$('#search-help').slideUp('slow');
+		$('#display_help').fadeIn('slow');
+		$('#hide_help').hide('slow');
+	});
+	$('#show_index').click(function() {
+		$('#container').find('*').remove();
+		$('#container').hide();
+		$('#container').load('cgi-bin/search.py?mode=index');
+		$('#container').fadeIn('slow');
+		
+	});
+});
+</script>
+</head>
+<body>
+<h1>Suche</h1>
+<p>Hier k&ouml;nnt ihr erstmal nach etwas suchen:</p>
+<form action="cgi-bin/search.py" method="get">
+<input type="text" size="50" name="q" autofocus="autofocus" style="height:50px;font-size:20px;" /><input type="submit" value="Suche" style="width:100px; height:50px;font-size:20px;" />
+</form>
+<a href="#" id="display_help">Hilfe anzeigen</a><a href="#" id="hide_help">Hilfe verstecken</a>
+<p id="search-help">
+blablabla
+</p>
+
+<p>Oder auch etwas finden: <a id="show_index" href="cgi-bin/search.py?mode=index" title="Zeige komplette Datenbank an">Gehe zum Datenbank-Index</a>
+</p>
+</body>
+</html>
