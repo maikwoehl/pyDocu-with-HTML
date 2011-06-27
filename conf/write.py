@@ -29,17 +29,17 @@ def write(filename, keywords):
 		return False
 		
 		
-def backup(filename):
-	
-	with open("../pages/"+filename, "r") as handler:
-		html = handler.read()
-
-	inFileHTML = html % { "site_title" : src.site_title, "site_meta" : src.site_meta, "site_css" : src.site_css, "site_js" : src.site_js }
-	inFileHTML = inFileHTML.replace("'", "&#x92;")
-	inFileHTML = inFileHTML.replace("\n", "")
+def backup():
 	try:
-		db.execute("INSERT INTO tkhelp VALUES ('%(filename)s', '%(inFileHTML)s')" %  { "filename" : filename, "inFileHTML" : inFileHTML })
-		conn.commit()
+		sql = "SELECT * FROM webdocu"
+		backup_sql = db.execute(sql)
+		for row in backup_sql:
+			sql_save = "INSERT INTO backup VALUES ('%(filename)s', '%(keywords)s', '%(inFileHTML)s')" %  { "filename" : row[0], "inFileHTML" : row[2], "keywords" : row[1] }
+			print(sql_save)
+			db.execute(sql_save)
+			print(row[0]+"saved!")
+			conn.commit()
+			
 		return True
 	
 	except sqlite3.IntegrityError:
@@ -63,15 +63,9 @@ def checkIn(type):
 		checkIn("normal")
 		
 	elif type == "backup":
-		db.execute("DELETE FROM tkhelp")
-		for sFile in dirList:
-			keyname = sFile.replace(".", "_")
-			keywords = keyconf.getKeywords(keyname)
-			writeHandler = backup(sFile)
-			if writeHandler:
-				print("Datensatz '",sFile,"' wurde gesichert!")
+		backup()
+		print("If you can't view the sql file with an sql viewer or sql admin tool, you should use the backup2save command!")
 				
-		print("Sie koennen die SQL Daten aus der tkhelp-Tabelle exportieren(Fremdtools benoetigt)")
 
 try: 			
 	if sys.argv[1]:
@@ -82,6 +76,52 @@ try:
 		elif sys.argv[1] == "backup":
 			checkIn("backup")
 			sys.exit(0)
+			
+		elif sys.argv[1] == "dumpSQL":
+			print("Please specify a dump-Filename!")
+			dumpfile = input("Exit with X! \nfilename: ")
+				
+			if dumpfile != "X":
+				with open(dumpfile, 'w') as f:
+					for line in conn.iterdump():
+						f.write('%s\n' % line)
+				print("Written to "+dumpfile+"!")	
+				sys.exit(0)	
+			else:
+				sys.exit(0)
+				
+		elif sys.argv[1] == "dump2DB":
+			print("Save another DUMP file to restoredump.sql")
+			with open("restoredump.sql", 'w') as f:
+					for line in conn.iterdump():
+						f.write('%s\n' % line)
+						
+			print("Choose one of this files:")
+			print(os.system("dir"))
+			print()
+			print("Please specify your Dump-File!")
+			dumpfile = input("Exit with X! \nfilename:")
+			
+			if dumpfile == "X":
+				pass
+			elif dumpfile == "x":
+				pass
+			else:
+				try:
+					db.execute("DROP TABLE webdocu")
+					db.execute("DROP TABLE backup")
+					conn.commit()
+				except sqlite3.OperationalError:
+					pass
+				
+				with open(dumpfile, "r") as f:
+					dump = f.read()
+					
+				db.executescript(dump)
+				conn.commit()
+				print("Restore from "+dumpfile+"!")
+				sys.exit(0)
+			
 			
 		else:
 			print("Unknown parameter, program execute...")
