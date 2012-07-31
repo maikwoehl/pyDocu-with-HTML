@@ -1,3 +1,3 @@
 echo "Lege Datenbankbackup an..."
 echo "=========================="
-python3.1 write.py backup
+python3 write.py backup

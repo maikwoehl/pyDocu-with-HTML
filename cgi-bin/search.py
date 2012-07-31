@@ -1,4 +1,4 @@
-#!/usr/bin/python3.1
+#!/usr/bin/python3
 import cgi
 import cgitb; cgitb.enable()
 import sqlite3
